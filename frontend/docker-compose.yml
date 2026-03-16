@@ -1,0 +1,25 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # 构建时后端地址（容器间通信用服务名）
+        API_BASE_URL: http://backend:8000
+    image: guanyou-resume:latest
+    container_name: guanyou-resume
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      API_BASE_URL: http://backend:8000
+    restart: unless-stopped
+    # 如果后端也用 docker compose 启动，取消下面的注释
+    # depends_on:
+    #   - backend
+    # networks:
+    #   - app-net
+
+# networks:
+#   app-net:
+#     external: true

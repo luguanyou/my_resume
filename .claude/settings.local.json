@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:d[k] for k in [''''name'''',''''scripts'''',''''dependencies'''',''''devDependencies''''] if k in d}, indent=2, ensure_ascii=False\\)\\)\")"
+    ]
+  }
+}

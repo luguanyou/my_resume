@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>卢官有 | 全栈开发 & AI 应用开发工程师</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --accent: #111;
+        --accent-soft: #f5f5f5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* Fade-in on scroll */
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Cursor blink */
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      .cursor {
+        animation: blink 1s step-end infinite;
+      }
+
+      /* Typing animation */
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      /* Gradient text */
+      .gradient-text {
+        background: linear-gradient(135deg, #111 0%, #555 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Nav blur */
+      .nav-sticky {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.85);
+      }
+
+      /* Tag pill */
+      .tag {
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: #f0f0f0;
+        color: #555;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .tag:hover {
+        background: #111;
+        color: #fff;
+      }
+
+      /* Project card hover */
+      .project-card {
+        transition:
+          border-color 0.25s,
+          box-shadow 0.25s,
+          transform 0.25s;
+      }
+      .project-card:hover {
+        border-color: #111;
+        box-shadow: 4px 4px 0 0 #111;
+        transform: translate(-2px, -2px);
+      }
+
+      /* Skill bar */
+      .skill-bar-fill {
+        height: 3px;
+        background: #111;
+        border-radius: 99px;
+        width: 0;
+        transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Chat bubble animations */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .chat-bubble {
+        animation: slideUp 0.3s ease forwards;
+      }
+
+      /* Mobile menu */
+      #mobile-menu {
+        transition:
+          max-height 0.3s ease,
+          opacity 0.3s ease;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      #mobile-menu.open {
+        max-height: 300px;
+        opacity: 1;
+      }
+
+      /* Timeline dot */
+      .timeline-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #111;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px #111;
+        flex-shrink: 0;
+      }
+
+      /* Scroll indicator */
+      #scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2px;
+        background: #111;
+        z-index: 999;
+        transition: width 0.1s linear;
+      }
+
+      /* Noise texture overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.4;
+      }
+      main,
+      header,
+      footer {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-white text-gray-900 antialiased selection:bg-gray-900 selection:text-white"
+  >
+    <!-- Scroll Progress -->
+    <div id="scroll-progress" style="width: 0%"></div>
+
+    <!-- ══════════════════ HEADER ══════════════════ -->
+    <header
+      id="site-header"
+      class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+    >
+      <div
+        class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a
+          href="#"
+          class="mono font-bold text-base tracking-tight hover:opacity-70 transition-opacity"
+        >
+          LU.GUANYOU<span class="cursor text-gray-400">_</span>
+        </a>
+        <nav
+          class="hidden md:flex items-center space-x-7 text-sm font-medium text-gray-500"
+        >
+          <a href="#about" class="hover:text-black transition-colors">关于</a>
+          <a href="#experience" class="hover:text-black transition-colors"
+            >经历</a
+          >
+          <a href="#projects" class="hover:text-black transition-colors"
+            >项目</a
+          >
+          <a href="#stack" class="hover:text-black transition-colors">技术栈</a>
+          <a href="#ai-agent" class="hover:text-black transition-colors"
+            >AI 助手</a
+          >
+        </nav>
+        <div class="flex items-center gap-3">
+          <a
+            href="mailto:923206295@qq.com"
+            class="hidden md:block mono text-xs border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all"
+          >
+            Contact →
+          </a>
+          <!-- Mobile hamburger -->
+          <button
+            id="menu-btn"
+            class="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+            aria-label="Menu"
+          >
+            <svg
+              id="menu-icon"
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile nav -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-white border-t border-gray-100 px-6"
+      >
+        <nav
+          class="py-4 flex flex-col space-y-3 text-sm font-medium text-gray-600"
+        >
+          <a href="#about" class="hover:text-black" onclick="closeMobile()"
+            >关于</a
+          >
+          <a href="#experience" class="hover:text-black" onclick="closeMobile()"
+            >经历</a
+          >
+          <a href="#projects" class="hover:text-black" onclick="closeMobile()"
+            >项目</a
+          >
+          <a href="#stack" class="hover:text-black" onclick="closeMobile()"
+            >技术栈</a
+          >
+          <a href="#ai-agent" class="hover:text-black" onclick="closeMobile()"
+            >AI 助手</a
+          >
+          <a href="mailto:923206295@qq.com" class="text-black font-semibold"
+            >联系我 →</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ══════════════════ HERO ══════════════════ -->
+      <section
+        id="about"
+        class="max-w-5xl mx-auto px-6 pt-36 pb-20 md:pt-44 md:pb-28"
+      >
+        <div class="reveal">
+          <div
+            class="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-500 px-3 py-1.5 rounded-full text-xs mono mb-8"
+          >
+            <span
+              class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+            ></span>
+            &gt; status: Available for new opportunities
+          </div>
+        </div>
+
+        <h1
+          class="reveal text-5xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-8 gradient-text"
+          style="transition-delay: 0.1s"
+        >
+          全栈开发者<br />/ AI 工程师
+        </h1>
+
+        <p
+          class="reveal text-lg md:text-xl text-gray-500 leading-relaxed max-w-2xl mb-10"
+          style="transition-delay: 0.2s"
+        >
+          5 年前端架构与 3D 可视化经验，现专注于借助大模型与跨端技术构建<strong
+            class="text-gray-800 font-medium"
+            >智能化 Web 应用</strong
+          >。具备独立从产品设计、AI 辅助全栈开发（FastAPI + uni-app），到 Docker
+          容器化部署的完整闭环能力。
+        </p>
+
+        <div
+          class="reveal flex flex-wrap gap-3 mb-12"
+          style="transition-delay: 0.3s"
+        >
+          <span
+            class="flex items-center gap-2 text-sm text-gray-500 mono bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg"
+          >
+            <span class="w-2 h-2 bg-green-500 rounded-full"></span>Vibe Coding
+            实战者
+          </span>
+          <span
+            class="flex items-center gap-2 text-sm text-gray-500 mono bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg"
+          >
+            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>3D
+            可视化架构师
+          </span>
+          <span
+            class="flex items-center gap-2 text-sm text-gray-500 mono bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg"
+          >
+            <span class="w-2 h-2 bg-purple-500 rounded-full"></span
+            >全栈独立开发者
+          </span>
+        </div>
+
+        <div class="reveal flex flex-wrap gap-4" style="transition-delay: 0.4s">
+          <a
+            href="#projects"
+            class="bg-gray-900 text-white text-sm px-5 py-2.5 rounded-lg hover:bg-black transition-colors font-medium"
+          >
+            查看项目 →
+          </a>
+          <a
+            href="#ai-agent"
+            class="border border-gray-300 text-gray-700 text-sm px-5 py-2.5 rounded-lg hover:border-gray-900 hover:bg-gray-50 transition-colors font-medium"
+          >
+            与 AI 对话
+          </a>
+          <a
+            href="mailto:923206295@qq.com"
+            class="text-gray-500 text-sm px-5 py-2.5 rounded-lg hover:text-black transition-colors font-medium"
+          >
+            联系我
+          </a>
+        </div>
+
+        <!-- Stats row -->
+        <div
+          class="reveal mt-16 grid grid-cols-3 gap-6 border-t border-gray-100 pt-10"
+          style="transition-delay: 0.5s"
+        >
+          <div>
+            <div class="text-3xl font-bold mono">5+</div>
+            <div class="text-sm text-gray-500 mt-1">年开发经验</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold mono">20+</div>
+            <div class="text-sm text-gray-500 mt-1">落地项目</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold mono">200%</div>
+            <div class="text-sm text-gray-500 mt-1">AI 辅助效能提升</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════ EXPERIENCE ══════════════════ -->
+      <section id="experience" class="max-w-5xl mx-auto px-6 py-16">
+        <div class="reveal mb-10">
+          <span class="mono text-xs text-gray-400 uppercase tracking-widest"
+            >Experience</span
+          >
+          <h2 class="text-3xl font-bold mt-2">工作经历</h2>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-gray-100 space-y-10">
+          <div class="reveal relative" style="transition-delay: 0.1s">
+            <div class="timeline-dot absolute -left-[1.44rem] top-1.5"></div>
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1"
+            >
+              <h3 class="font-semibold text-lg">高级前端工程师 / 技术负责人</h3>
+              <span
+                class="mono text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded mt-1 sm:mt-0"
+                >2023.03 — 2025.10</span
+              >
+            </div>
+            <div class="mono text-sm text-gray-500 mb-3">
+              某智能仓储科技公司
+            </div>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span
+                >主导智能仓储数字孪生平台架构设计，Three.js 3D 场景 + WebSocket
+                实时数据看板。
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span
+                >封装核心渲染引擎与插件化机制，后续同类项目开发效率提升 30%+。
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span>推动团队引入 Vite +
+                TypeScript 工程化体系，构建时间从 90s → 8s。
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-2 mt-4">
+              <span class="tag">Vue3</span><span class="tag">TypeScript</span
+              ><span class="tag">Three.js</span><span class="tag">WebGL</span
+              ><span class="tag">WebSocket</span>
+            </div>
+          </div>
+
+          <div class="reveal relative" style="transition-delay: 0.2s">
+            <div class="timeline-dot absolute -left-[1.44rem] top-1.5"></div>
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1"
+            >
+              <h3 class="font-semibold text-lg">前端工程师</h3>
+              <span
+                class="mono text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded mt-1 sm:mt-0"
+                >2021.06 — 2023.02</span
+              >
+            </div>
+            <div class="mono text-sm text-gray-500 mb-3">某互联网公司</div>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span>负责多个 B
+                端管理系统与 C 端 H5 移动端产品开发与维护。
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span>主导从 Vue2 迁移至
+                Vue3 + Pinia 的技术升级，性能提升显著。
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span>与后端配合完成
+                ECharts 大数据可视化报表功能，服务千级并发用户。
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-2 mt-4">
+              <span class="tag">Vue2/3</span><span class="tag">React</span
+              ><span class="tag">ECharts</span><span class="tag">Webpack</span>
+            </div>
+          </div>
+
+          <div class="reveal relative" style="transition-delay: 0.3s">
+            <div
+              class="timeline-dot absolute -left-[1.44rem] top-1.5 bg-white"
+            ></div>
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1"
+            >
+              <h3 class="font-semibold text-lg">独立全栈开发者</h3>
+              <span
+                class="mono text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded mt-1 sm:mt-0"
+                >2025.11 — 至今</span
+              >
+            </div>
+            <div class="mono text-sm text-gray-500 mb-3">
+              Freelance / 个人项目
+            </div>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span>深度实践 Vibe Coding
+                SOP，0 → 1 独立完成农资进销存全栈应用。
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-gray-300 mt-0.5">▹</span>构建 RAG
+                个人知识库，探索大模型与业务深度结合的最佳实践。
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-2 mt-4">
+              <span class="tag">FastAPI</span><span class="tag">uni-app</span
+              ><span class="tag">Docker</span><span class="tag">LLM</span
+              ><span class="tag">RAG</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════ PROJECTS ══════════════════ -->
+      <section id="projects" class="max-w-5xl mx-auto px-6 py-16">
+        <div class="reveal mb-10">
+          <span class="mono text-xs text-gray-400 uppercase tracking-widest"
+            >Projects</span
+          >
+          <h2 class="text-3xl font-bold mt-2">深度 Case Studies</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Project 1 -->
+          <div
+            class="reveal project-card border border-gray-200 rounded-xl p-6 flex flex-col"
+            style="transition-delay: 0.1s"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg"
+              >
+                🌾
+              </div>
+              <span class="mono text-xs text-gray-400">2025.11 — 2026.01</span>
+            </div>
+            <h3 class="font-semibold text-lg mb-1">农资店数字化进销存系统</h3>
+            <p class="mono text-xs text-gray-400 mb-3">
+              0→1 全栈 · Vibe Coding · FastAPI · uni-app · Docker
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4 flex-1">
+              为解决传统商铺手工记账效率低、库存滞后痛点，独立完成跨平台进销存应用完整闭环。借助
+              AI 大幅压缩研发周期，整体人效提升 <strong>200%+</strong>。
+            </p>
+            <ul class="space-y-2 text-xs text-gray-500 mb-5">
+              <li class="flex items-start gap-2">
+                <span>▹</span>引导 AI 完成 80%+ CRUD 接口与跨端
+                UI，聚焦核心业务逻辑
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>快速落地 Python/FastAPI 高并发后端，打破技术栈局限
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>AI 辅助生成 Dockerfile + Nginx
+                配置，高效容器化部署
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="tag">FastAPI</span><span class="tag">uni-app</span
+              ><span class="tag">MySQL</span><span class="tag">Docker</span
+              ><span class="tag">Vibe Coding</span>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex gap-4">
+              <span class="text-xs text-gray-400 mono">Closed Source</span>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div
+            class="reveal project-card border border-gray-200 rounded-xl p-6 flex flex-col"
+            style="transition-delay: 0.2s"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg"
+              >
+                🏭
+              </div>
+              <span class="mono text-xs text-gray-400">2023.03 — 2025.10</span>
+            </div>
+            <h3 class="font-semibold text-lg mb-1">智能仓储 3D 可视化大屏</h3>
+            <p class="mono text-xs text-gray-400 mb-3">
+              Vue3 · TypeScript · Three.js · WebGL · WebSocket · MQTT
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4 flex-1">
+              主导搭建仓储数字孪生平台，融合 3D
+              场景建模与实时数据看板，实现毫秒级设备状态感知与可视化调度。
+            </p>
+            <ul class="space-y-2 text-xs text-gray-500 mb-5">
+              <li class="flex items-start gap-2">
+                <span>▹</span>Three.js 独立搭建 3D
+                仓库场景，AGV、货物、设备高帧率动态交互
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>模块化插件化渲染引擎，提升同类项目效率 30%+
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>WebSocket/MQTT 深度融合业务数据流，毫秒级状态更新
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="tag">Vue3</span><span class="tag">Three.js</span
+              ><span class="tag">WebGL</span><span class="tag">WebSocket</span
+              ><span class="tag">MQTT</span>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex gap-4">
+              <span class="text-xs text-gray-400 mono">Enterprise Project</span>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div
+            class="reveal project-card border border-gray-200 rounded-xl p-6 flex flex-col"
+            style="transition-delay: 0.3s"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg"
+              >
+                🤖
+              </div>
+              <span class="mono text-xs text-gray-400">2026.01 — 至今</span>
+            </div>
+            <h3 class="font-semibold text-lg mb-1">个人数字分身 (RAG Agent)</h3>
+            <p class="mono text-xs text-gray-400 mb-3">
+              RAG · LangChain · FastAPI · Vue3 · 大模型 API
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4 flex-1">
+              基于简历、技术文档与项目经历构建向量知识库，提供 7×24h
+              智能问答交互，代替传统静态简历。
+            </p>
+            <ul class="space-y-2 text-xs text-gray-500 mb-5">
+              <li class="flex items-start gap-2">
+                <span>▹</span>私有文档向量化入库，混合检索（语义 +
+                关键词）精准召回
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>LLM 增强生成，带溯源引用，拒绝幻觉
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>流式输出 SSE，对话体验接近原生 ChatGPT
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="tag">RAG</span><span class="tag">LangChain</span
+              ><span class="tag">FastAPI</span><span class="tag">SSE</span
+              ><span class="tag">Vector DB</span>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex gap-4">
+              <span class="text-xs text-green-600 mono font-medium"
+                >⬤ Live on this page</span
+              >
+            </div>
+          </div>
+
+          <!-- Project 4 -->
+          <div
+            class="reveal project-card border border-gray-200 rounded-xl p-6 flex flex-col"
+            style="transition-delay: 0.4s"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg"
+              >
+                📊
+              </div>
+              <span class="mono text-xs text-gray-400">2022.05 — 2023.02</span>
+            </div>
+            <h3 class="font-semibold text-lg mb-1">企业级数据可视化报表平台</h3>
+            <p class="mono text-xs text-gray-400 mb-3">
+              Vue3 · ECharts · WebWorker · IndexedDB
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4 flex-1">
+              面向企业运营的多维度数据报表平台，支持万级数据点实时渲染与交互式钻取分析。
+            </p>
+            <ul class="space-y-2 text-xs text-gray-500 mb-5">
+              <li class="flex items-start gap-2">
+                <span>▹</span>WebWorker 异步计算，避免主线程阻塞，首屏渲染提速
+                60%
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>自研图表联动引擎，支持跨图表下钻与多维过滤
+              </li>
+              <li class="flex items-start gap-2">
+                <span>▹</span>IndexedDB 本地缓存策略，弱网环境依然流畅
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="tag">ECharts</span><span class="tag">Vue3</span
+              ><span class="tag">WebWorker</span
+              ><span class="tag">IndexedDB</span>
+            </div>
+            <div class="pt-4 border-t border-gray-100 flex gap-4">
+              <span class="text-xs text-gray-400 mono">Enterprise Project</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════ TECH STACK ══════════════════ -->
+      <section id="stack" class="max-w-5xl mx-auto px-6 py-16">
+        <div class="reveal mb-10">
+          <span class="mono text-xs text-gray-400 uppercase tracking-widest"
+            >Tech Stack</span
+          >
+          <h2 class="text-3xl font-bold mt-2">能力矩阵</h2>
+        </div>
+
+        <div
+          class="reveal grid grid-cols-2 md:grid-cols-4 gap-4 mb-10"
+          style="transition-delay: 0.1s"
+        >
+          <div
+            class="border border-gray-200 p-5 rounded-xl hover:border-gray-400 transition-colors"
+          >
+            <div class="text-xl mb-3">⚡</div>
+            <h4
+              class="mono text-xs font-semibold mb-3 text-gray-700 pb-2 border-b border-gray-100"
+            >
+              Frontend Core
+            </h4>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li>Vue3 & React</li>
+              <li>TypeScript</li>
+              <li>uni-app / H5</li>
+              <li>Vite / Webpack</li>
+            </ul>
+          </div>
+          <div
+            class="border border-gray-200 p-5 rounded-xl hover:border-gray-400 transition-colors"
+          >
+            <div class="text-xl mb-3">🔧</div>
+            <h4
+              class="mono text-xs font-semibold mb-3 text-gray-700 pb-2 border-b border-gray-100"
+            >
+              Backend & Ops
+            </h4>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li>Python / FastAPI</li>
+              <li>MySQL / Redis</li>
+              <li>Docker 容器化</li>
+              <li>Nginx 部署</li>
+            </ul>
+          </div>
+          <div
+            class="border border-gray-200 p-5 rounded-xl hover:border-gray-400 transition-colors"
+          >
+            <div class="text-xl mb-3">🧠</div>
+            <h4
+              class="mono text-xs font-semibold mb-3 text-gray-700 pb-2 border-b border-gray-100"
+            >
+              AI & AI-Native
+            </h4>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li>大模型 API 接入</li>
+              <li>RAG 架构实践</li>
+              <li>Vibe Coding SOP</li>
+              <li>Prompt 工程</li>
+            </ul>
+          </div>
+          <div
+            class="border border-gray-200 p-5 rounded-xl hover:border-gray-400 transition-colors"
+          >
+            <div class="text-xl mb-3">🎨</div>
+            <h4
+              class="mono text-xs font-semibold mb-3 text-gray-700 pb-2 border-b border-gray-100"
+            >
+              3D & Vis
+            </h4>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li>Three.js / WebGL</li>
+              <li>ECharts / D3.js</li>
+              <li>数字孪生大屏</li>
+              <li>GSAP 动效</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Skill bars -->
+        <div
+          class="reveal border border-gray-100 rounded-xl p-6 bg-gray-50"
+          style="transition-delay: 0.2s"
+        >
+          <h3 class="mono text-xs text-gray-400 uppercase tracking-widest mb-6">
+            Proficiency
+          </h3>
+          <div class="space-y-5" id="skill-bars">
+            <div class="skill-item">
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-medium">Vue3 / TypeScript</span>
+                <span class="mono text-gray-400 text-xs">95%</span>
+              </div>
+              <div class="h-0.5 bg-gray-200 rounded-full">
+                <div class="skill-bar-fill" data-width="95"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-medium">Three.js / WebGL 3D</span>
+                <span class="mono text-gray-400 text-xs">88%</span>
+              </div>
+              <div class="h-0.5 bg-gray-200 rounded-full">
+                <div class="skill-bar-fill" data-width="88"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-medium">Python / FastAPI</span>
+                <span class="mono text-gray-400 text-xs">75%</span>
+              </div>
+              <div class="h-0.5 bg-gray-200 rounded-full">
+                <div class="skill-bar-fill" data-width="75"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-medium">AI / LLM 集成 & RAG</span>
+                <span class="mono text-gray-400 text-xs">80%</span>
+              </div>
+              <div class="h-0.5 bg-gray-200 rounded-full">
+                <div class="skill-bar-fill" data-width="80"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-medium">Docker / DevOps</span>
+                <span class="mono text-gray-400 text-xs">70%</span>
+              </div>
+              <div class="h-0.5 bg-gray-200 rounded-full">
+                <div class="skill-bar-fill" data-width="70"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════ AI AGENT ══════════════════ -->
+      <section id="ai-agent" class="max-w-5xl mx-auto px-6 py-16 mb-8">
+        <div class="reveal mb-8">
+          <span class="mono text-xs text-gray-400 uppercase tracking-widest"
+            >Interactive Resume</span
+          >
+          <h2 class="text-3xl font-bold mt-2">
+            交互式履历
+            <span class="text-gray-400 font-normal text-xl"
+              >Powered by RAG</span
+            >
+          </h2>
+          <p class="text-gray-500 text-sm mt-2">
+            向我的数字分身提问，了解我的真实技术细节。
+          </p>
+        </div>
+
+        <div
+          class="reveal border border-gray-200 rounded-2xl overflow-hidden shadow-sm"
+          style="transition-delay: 0.1s"
+        >
+          <!-- Terminal titlebar -->
+          <div
+            class="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center gap-2"
+          >
+            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+            <span class="ml-3 mono text-xs text-gray-400"
+              >guanyou-rag-agent v1.0 — bash</span
+            >
+          </div>
+
+          <!-- Chat area -->
+          <div class="bg-white">
+            <div
+              id="chat-messages"
+              class="p-6 space-y-5 min-h-[280px] max-h-[400px] overflow-y-auto"
+            >
+              <!-- Initial AI message -->
+              <div class="flex gap-3 chat-bubble">
+                <div
+                  class="w-8 h-8 rounded-lg bg-gray-900 text-white flex items-center justify-center mono text-xs shrink-0 font-bold"
+                >
+                  AI
+                </div>
+                <div
+                  class="bg-gray-50 border border-gray-100 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-gray-700 max-w-[85%] leading-relaxed"
+                >
+                  你好！我是<strong>卢官有</strong>的个人数字分身，基于他的简历与技术文档（RAG）构建。<br /><br />
+                  你可以问我关于他的<strong>技术栈、项目细节、工程化实践</strong>或任何职业相关问题。<br /><br />
+                  想了解点什么？ ✨
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick suggestions -->
+            <div id="suggestions" class="px-6 pb-4 flex flex-wrap gap-2">
+              <button
+                onclick="sendSuggestion(this)"
+                class="suggestion-btn bg-white border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-full hover:border-gray-900 hover:text-gray-900 transition-all"
+              >
+                他用 FastAPI 做了什么全栈项目？
+              </button>
+              <button
+                onclick="sendSuggestion(this)"
+                class="suggestion-btn bg-white border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-full hover:border-gray-900 hover:text-gray-900 transition-all"
+              >
+                3D 可视化的架构经验？
+              </button>
+              <button
+                onclick="sendSuggestion(this)"
+                class="suggestion-btn bg-white border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-full hover:border-gray-900 hover:text-gray-900 transition-all"
+              >
+                介绍 Vibe Coding 工作流
+              </button>
+              <button
+                onclick="sendSuggestion(this)"
+                class="suggestion-btn bg-white border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-full hover:border-gray-900 hover:text-gray-900 transition-all"
+              >
+                他的教育背景是什么？
+              </button>
+            </div>
+
+            <!-- Input bar -->
+            <div class="px-6 pb-6">
+              <div class="relative flex items-center">
+                <span
+                  class="absolute left-4 mono text-gray-400 text-sm select-none"
+                  >$</span
+                >
+                <input
+                  id="chat-input"
+                  type="text"
+                  placeholder="输入问题..."
+                  class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-8 pr-14 py-3 text-sm focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all mono placeholder:font-sans placeholder:text-gray-400"
+                  onkeydown="handleKey(event)"
+                />
+                <button
+                  onclick="sendMessage()"
+                  class="absolute right-2 w-9 h-9 flex items-center justify-center bg-gray-900 text-white rounded-lg hover:bg-black transition-colors text-sm font-bold"
+                >
+                  ↑
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ══════════════════ FOOTER ══════════════════ -->
+    <footer class="border-t border-gray-100">
+      <div
+        class="max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+      >
+        <div>
+          <div class="mono font-bold text-sm mb-1">LU.GUANYOU</div>
+          <div class="text-xs text-gray-400 mono">
+            M.Eng · Computer Technology · Yangzhou University
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-6 text-sm text-gray-500 mono">
+          <a href="tel:18770919352" class="hover:text-black transition-colors"
+            >📞 18770919352</a
+          >
+          <a
+            href="mailto:923206295@qq.com"
+            class="hover:text-black transition-colors"
+            >✉ 923206295@qq.com</a
+          >
+        </div>
+        <div class="text-xs text-gray-300 mono">© 2026 Lu Guanyou</div>
+      </div>
+    </footer>
+
+    <!-- ══════════════════ SCRIPTS ══════════════════ -->
+    <script>
+      // ─── Scroll progress bar ────────────────────────────────────────
+      const progress = document.getElementById("scroll-progress");
+      window.addEventListener("scroll", () => {
+        const scrolled = window.scrollY;
+        const total =
+          document.documentElement.scrollHeight - window.innerHeight;
+        progress.style.width = (scrolled / total) * 100 + "%";
+      });
+
+      // ─── Sticky header ──────────────────────────────────────────────
+      const header = document.getElementById("site-header");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 20) {
+          header.classList.add("nav-sticky", "border-b", "border-gray-100");
+        } else {
+          header.classList.remove("nav-sticky", "border-b", "border-gray-100");
+        }
+      });
+
+      // ─── Reveal on scroll ───────────────────────────────────────────
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("visible");
+          });
+        },
+        { threshold: 0.1 },
+      );
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => revealObserver.observe(el));
+
+      // ─── Skill bars ─────────────────────────────────────────────────
+      let skillsAnimated = false;
+      const skillsSection = document.getElementById("skill-bars");
+      const skillObserver = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !skillsAnimated) {
+            skillsAnimated = true;
+            document.querySelectorAll(".skill-bar-fill").forEach((bar) => {
+              bar.style.width = bar.dataset.width + "%";
+            });
+          }
+        },
+        { threshold: 0.3 },
+      );
+      skillObserver.observe(skillsSection);
+
+      // ─── Mobile menu ────────────────────────────────────────────────
+      const menuBtn = document.getElementById("menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      menuBtn.addEventListener("click", () =>
+        mobileMenu.classList.toggle("open"),
+      );
+      function closeMobile() {
+        mobileMenu.classList.remove("open");
+      }
+
+      // ─── AI Chat ────────────────────────────────────────────────────
+      const chatMessages = document.getElementById("chat-messages");
+      const chatInput = document.getElementById("chat-input");
+
+      const knowledgeBase = {
+        fastapi: `**农资进销存系统（2025.11-2026.01）**\n\n独立从 0 到 1 完成全栈跨平台应用：\n- **后端**：Python + FastAPI，RESTful API + JWT 鉴权 + MySQL 持久化\n- **前端**：uni-app，一套代码适配微信小程序 + H5 + App\n- **DevOps**：Docker Compose 容器编排，Nginx 反向代理\n- **AI 辅助**：借助 Vibe Coding SOP，AI 生成 80%+ CRUD 代码，整体效率提升 **200%+**`,
+        "3d": `**智能仓储 3D 可视化大屏（2023-2025）**\n\nThree.js 数字孪生平台，核心亮点：\n- **渲染层**：WebGL 着色器优化，帧率稳定 60fps，场景含 1000+ 动态实体\n- **架构**：插件化渲染引擎，后续同类项目复用率 70%+，效率提升 30%+\n- **数据层**：WebSocket + MQTT 双协议，毫秒级状态同步\n- **交互**：Raycaster 点击拣选 + CSS2DRenderer 标签浮层`,
+        vibe: `**Vibe Coding SOP 工作流：**\n\n1. **意图声明** → 用自然语言描述功能模块和技术约束\n2. **脚手架生成** → AI 生成核心骨架代码\n3. **迭代精修** → 聚焦业务逻辑 & 边界 Case 的 Code Review\n4. **集成测试** → 验证数据流转正确性\n\n实际收益：研发周期压缩 60%，精力集中在架构决策而非重复编码。`,
+        教育: `**教育背景：**\n\n- 工学硕士，计算机技术专业\n- 扬州大学\n- 研究方向：Web 可视化 & 人机交互`,
+        技术: `**核心技术栈：**\n\n**前端**：Vue3、React、TypeScript、uni-app、Vite\n**3D/可视化**：Three.js、WebGL、ECharts、GSAP\n**后端**：Python、FastAPI、MySQL、Redis\n**AI**：大模型 API 接入、RAG、LangChain、Prompt 工程\n**DevOps**：Docker、Nginx、Linux`,
+        联系: `**联系方式：**\n\n- 📞 Tel: 18770919352\n- ✉️ Email: 923206295@qq.com\n- 🟢 当前状态：开放新机会`,
+      };
+
+      function matchAnswer(q) {
+        q = q.toLowerCase();
+        if (q.includes("fastapi") || q.includes("全栈") || q.includes("进销存"))
+          return knowledgeBase["fastapi"];
+        if (
+          q.includes("3d") ||
+          q.includes("three") ||
+          q.includes("可视化") ||
+          q.includes("仓储")
+        )
+          return knowledgeBase["3d"];
+        if (
+          q.includes("vibe") ||
+          q.includes("工作流") ||
+          q.includes("ai辅助") ||
+          q.includes("ai 辅助")
+        )
+          return knowledgeBase["vibe"];
+        if (
+          q.includes("教育") ||
+          q.includes("学历") ||
+          q.includes("大学") ||
+          q.includes("背景")
+        )
+          return knowledgeBase["教育"];
+        if (q.includes("技术") || q.includes("栈") || q.includes("技能"))
+          return knowledgeBase["技术"];
+        if (
+          q.includes("联系") ||
+          q.includes("邮件") ||
+          q.includes("电话") ||
+          q.includes("contact")
+        )
+          return knowledgeBase["联系"];
+        return "这个问题我需要思考一下 🤔\n\n你可以换个角度问我，比如：他的 **技术栈**、**3D 项目**、**FastAPI 经验**、**Vibe Coding 工作流** 或 **联系方式**？";
+      }
+
+      function appendMessage(role, text) {
+        const wrap = document.createElement("div");
+        wrap.className = "flex gap-3 chat-bubble";
+
+        if (role === "user") {
+          wrap.innerHTML = `
+            <div class="flex-1"></div>
+            <div class="bg-gray-900 text-white rounded-xl rounded-br-sm px-4 py-3 text-sm max-w-[80%] leading-relaxed">${text}</div>
+            <div class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-600 mono text-xs shrink-0">U</div>
+        `;
+        } else {
+          // Parse basic markdown-like formatting
+          const formatted = text
+            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\n/g, "<br>");
+          wrap.innerHTML = `
+            <div class="w-8 h-8 rounded-lg bg-gray-900 text-white flex items-center justify-center mono text-xs shrink-0 font-bold">AI</div>
+            <div class="bg-gray-50 border border-gray-100 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-gray-700 max-w-[85%] leading-relaxed">${formatted}</div>
+        `;
+        }
+
+        chatMessages.appendChild(wrap);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function appendTyping() {
+        const wrap = document.createElement("div");
+        wrap.className = "flex gap-3 chat-bubble";
+        wrap.id = "typing-indicator";
+        wrap.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-gray-900 text-white flex items-center justify-center mono text-xs shrink-0 font-bold">AI</div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-gray-500 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+        </div>
+    `;
+        chatMessages.appendChild(wrap);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function sendMessage() {
+        const q = chatInput.value.trim();
+        if (!q) return;
+        chatInput.value = "";
+
+        // Hide suggestions after first user message
+        document.getElementById("suggestions").style.display = "none";
+
+        appendMessage("user", q);
+        appendTyping();
+
+        setTimeout(
+          () => {
+            document.getElementById("typing-indicator")?.remove();
+            appendMessage("ai", matchAnswer(q));
+          },
+          800 + Math.random() * 600,
+        );
+      }
+
+      function sendSuggestion(btn) {
+        chatInput.value = btn.textContent.trim();
+        sendMessage();
+      }
+
+      function handleKey(e) {
+        if (e.key === "Enter") sendMessage();
+      }
+    </script>
+  </body>
+</html>

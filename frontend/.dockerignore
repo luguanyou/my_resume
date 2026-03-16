@@ -1,0 +1,12 @@
+.git
+.claude
+node_modules
+.next
+.env*.local
+*.md
+*.pdf
+*.txt
+*.html
+原型图*
+简历*
+需求*

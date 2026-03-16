@@ -1,0 +1,98 @@
+交互式个人简历 Agent 后端需求文档 (PRD)
+1. 项目概述
+本项目是一个结合传统结构化数据展示与大模型 AI 问答能力的“交互式个人简历”。后端系统负责提供结构化的个人履历数据支撑前端页面渲染，同时集成 RAG（检索增强生成）技术，使 AI 能够基于开发者的真实简历内容，以流式对话的形式与访客或面试官进行智能交互。
+
+2. 核心架构与技术选型
+后端框架: FastAPI (Python) - 异步、高性能。
+
+关系型数据库: SQLite + SQLAlchemy ORM - 轻量化，无需额外服务部署，展示关系型数据库建模能力。
+
+向量数据库: FAISS 或 ChromaDB (本地运行) - 用于存储和检索简历文本向量。
+
+AI 交互大模型: DeepSeek / Kimi API (通过 OpenAI 兼容 SDK 调用)。
+
+RAG 框架 (可选): LangChain 或纯手工编写检索逻辑（展示底层原理掌握度）。
+
+通信协议: HTTP (基础接口) + SSE (流式对话交互)。
+
+3. 数据存储与结构设计
+3.1 关系型数据 (SQLite)
+用于提供前端静态页面所需的结构化展示数据。
+
+user_profile 表: 存储基本信息（姓名、计算机技术硕士学历、求职意向、联系方式等）。
+
+work_experiences 表: 存储工作履历（公司名称、职位、起止时间、核心职责）。
+
+projects 表: 存储项目经验，例如“海谷农资账本”（包含项目名称、技术栈如 Vue/uni-app/FastAPI、项目描述、链接等）。
+
+skills 表: 存储技术栈标签（如 Vue3、前端可视化、Python、FastAPI、vLLM 部署等）。
+
+3.2 非结构化知识库 (Markdown + Vector DB)
+数据源: 根目录下的 resume_knowledge.md 文件。该文件详细记录所有的个人经历、技术细节、项目难点（如处理农资账本并发、大语言模型部署踩坑记录等）。
+
+处理机制: 后端启动或接收到刷新指令时，读取 Markdown 文件，切分文本块，调用 Embedding 模型（如 BGE 或 OpenAI Embedding）向量化后存入向量数据库。
+
+4. 接口需求详细说明
+4.1 基础数据接口 (RESTful API)
+供前端页面初始加载时获取静态数据。
+
+GET /api/profile
+
+功能: 获取个人基本信息及技术栈。
+
+响应: JSON 格式的个人资料对象。
+
+GET /api/projects
+
+功能: 获取项目经验列表。
+
+响应: 包含多个项目对象的 JSON 数组。
+
+GET /api/experiences
+
+功能: 获取工作经历时间线。
+
+响应: 包含工作经历对象的 JSON 数组。
+
+4.2 核心 AI 交互接口
+POST /api/chat
+
+功能: 处理访客的提问，结合本地知识库生成回答并流式输出。
+
+请求参数:
+
+session_id (String, 必填): 前端生成的 UUID，用于标识当前访客会话。
+
+message (String, 必填): 访客当前输入的问题。
+
+处理逻辑:
+
+接收问题后，提取 session_id 对应的历史对话记录（近 3-5 轮，存于内存或临时缓存）。
+
+将当前问题在向量数据库中进行相似度检索，获取相关的简历文本块。
+
+组装 System Prompt（包含人设声明、检索到的简历上下文、历史对话）。
+
+调用 DeepSeek/Kimi API。
+
+响应: text/event-stream (SSE)。逐字返回大模型的生成结果，前端通过 EventSource 或 Fetch API 接收并实现打字机效果。
+
+4.3 系统管理接口 (进阶)
+POST /api/admin/refresh-knowledge
+
+功能: 热更新本地知识库。
+
+处理逻辑: 重新读取 resume_knowledge.md，清空旧向量，重新切分并计算新向量存入数据库。
+
+响应: 成功/失败状态。
+
+GET /api/health
+
+功能: 健康检查探针。验证数据库连接和大模型 API 连通性。
+
+5. 会话与安全设计
+无登录状态管理: 不设用户登录体系。前端在 LocalStorage 生成并缓存 session_id (UUID)，每次对话携带此 ID。后端通过字典 Dict[session_id, List[messages]] 在内存中维护短期上下文。
+
+凭证安全: 大模型 API Key 必须存储在 .env 文件中，通过 pydantic-settings 或 os.environ 读取，严禁硬编码或暴露给前端。
+
+系统防御: 在 POST /api/chat 接口可添加简单的限流限制（Rate Limiting），防止恶意刷接口消耗 API 额度。
