@@ -12,17 +12,17 @@
 
 ## 技术栈
 
-| 层级 | 技术 |
-|------|------|
-| 前端框架 | Next.js 16 + React 19 + TypeScript |
-| 前端样式 | Tailwind CSS v4 + Framer Motion |
-| 后端框架 | FastAPI (Python) |
-| 关系型数据库 | SQLite + SQLAlchemy ORM |
-| 向量数据库 | ChromaDB（本地持久化） |
-| AI 对话 | OpenAI SDK（兼容 DeepSeek / Kimi 等） |
-| RAG 框架 | LangChain Text Splitters |
-| 数据校验 | Pydantic v2 |
-| 流式输出 | SSE（Server-Sent Events） |
+| 层级         | 技术                                  |
+| ------------ | ------------------------------------- |
+| 前端框架     | Next.js 16 + React 19 + TypeScript    |
+| 前端样式     | Tailwind CSS v4 + Framer Motion       |
+| 后端框架     | FastAPI (Python)                      |
+| 关系型数据库 | SQLite + SQLAlchemy ORM               |
+| 向量数据库   | ChromaDB（本地持久化）                |
+| AI 对话      | OpenAI SDK（兼容 DeepSeek / Kimi 等） |
+| RAG 框架     | LangChain Text Splitters              |
+| 数据校验     | Pydantic v2                           |
+| 流式输出     | SSE（Server-Sent Events）             |
 
 ## 项目结构
 
@@ -110,13 +110,13 @@ docker-compose up -d
 
 ### 结构化数据
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/profile` | 个人基本信息 |
-| GET | `/api/experiences` | 工作经历列表 |
-| GET | `/api/projects` | 项目经历列表 |
-| GET | `/api/skills` | 技能标签列表 |
-| GET | `/api/health` | 健康检查 |
+| 方法 | 路径               | 说明         |
+| ---- | ------------------ | ------------ |
+| GET  | `/api/profile`     | 个人基本信息 |
+| GET  | `/api/experiences` | 工作经历列表 |
+| GET  | `/api/projects`    | 项目经历列表 |
+| GET  | `/api/skills`      | 技能标签列表 |
+| GET  | `/api/health`      | 健康检查     |
 
 ### AI 对话（SSE）
 

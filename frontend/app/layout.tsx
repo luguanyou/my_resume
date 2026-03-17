@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "管友 | 全栈开发者 & AI 应用工程师",
+  title: "卢官有 | 全栈开发者 & AI 应用工程师",
   description:
     "5 年全栈开发经验，专注 AI 应用、3D 可视化与企业数字化解决方案。探索我的项目与工作经历。",
 };

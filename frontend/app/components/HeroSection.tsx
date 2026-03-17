@@ -80,13 +80,12 @@ export default function HeroSection({ data = DEFAULT_DATA }: HeroSectionProps) {
         </motion.div> */}
 
         {/* ── Main Title ── */}
-        <motion.div variants={itemVariants} className="flex flex-col gap-1">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-gray-950 leading-none">
+        <motion.div variants={itemVariants} className="flex flex-col gap-2">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-950 leading-tight">
             {data.title}
           </h1>
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-none">
-            <span className="text-gray-300">/ </span>
-            <span className="text-gray-700">{data.subtitle}</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight text-gray-700">
+            {data.subtitle}
           </h2>
         </motion.div>
 
