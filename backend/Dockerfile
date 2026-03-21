@@ -8,6 +8,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 预下载 ChromaDB 默认 embedding 模型（all-MiniLM-L6-v2）
+# 模型缓存在 /root/.cache/chroma，后续复制到运行阶段，避免部署时重复下载
+RUN python -c "from chromadb.utils.embedding_functions import DefaultEmbeddingFunction; DefaultEmbeddingFunction()(['test'])"
+
 # ── 运行阶段 ──────────────────────────────────────────────
 FROM python:3.11-slim
 
@@ -16,6 +20,9 @@ WORKDIR /app
 # 从 builder 阶段复制已安装的依赖
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
+
+# 复制预下载的 ChromaDB 模型缓存
+COPY --from=builder /root/.cache/chroma /root/.cache/chroma
 
 # 复制项目代码与数据文件
 COPY app/           ./app/
@@ -29,7 +36,10 @@ RUN mkdir -p /app/db /app/chroma_db
 EXPOSE 8000
 
 # 以非 root 用户运行，提升安全性
-RUN useradd -m appuser && chown -R appuser /app
+RUN useradd -m appuser \
+    && chown -R appuser /app \
+    && cp -r /root/.cache /home/appuser/.cache \
+    && chown -R appuser /home/appuser/.cache
 USER appuser
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

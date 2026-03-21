@@ -121,7 +121,7 @@ export default function AIChatWindow({
   const abortRef = useRef<AbortController | null>(null);
   // 每次组件挂载生成一个 session_id，后端用它维护多轮对话历史
   const sessionId = useRef(
-    typeof crypto !== "undefined"
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
       : `session-${Date.now()}`,
   );
@@ -269,7 +269,10 @@ export default function AIChatWindow({
         </div>
 
         {/* ── 对话流区 ── */}
-        <div ref={scrollContainerRef} className="h-72 sm:h-80 overflow-y-auto px-4 py-4 flex flex-col gap-3.5">
+        <div
+          ref={scrollContainerRef}
+          className="h-72 sm:h-80 overflow-y-auto px-4 py-4 flex flex-col gap-3.5"
+        >
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
               <MessageBubble key={msg.id} message={msg} />
