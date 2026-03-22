@@ -8,6 +8,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 设置 HuggingFace 国内镜像源，加速模型下载
+ENV HF_ENDPOINT=https://hf-mirror.com
+
 # 预下载 ChromaDB 默认 embedding 模型（all-MiniLM-L6-v2）
 # 模型缓存在 /root/.cache/chroma，后续复制到运行阶段，避免部署时重复下载
 RUN python -c "from chromadb.utils.embedding_functions import DefaultEmbeddingFunction; DefaultEmbeddingFunction()(['test'])"
