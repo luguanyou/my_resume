@@ -1,0 +1,67 @@
+services:
+  backend:
+    build: ./backend
+    container_name: resume_backend
+    ports:
+      - "8000:8000"
+    # 从后端目录读取环境变量配置（如 API Key 等）
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=sqlite:////app/db/resume.db
+      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - KNOWLEDGE_FILE=/app/resume_knowledge.md
+      - HF_ENDPOINT=https://hf-mirror.com
+    volumes:
+      # SQLite 数据库持久化
+      - db_data:/app/db
+      # ChromaDB 向量库持久化
+      - chroma_data:/app/chroma_db
+      # 简历知识库文件：绑定本地文件，修改后调接口即可热更新
+      - ./backend/resume_knowledge.md:/app/resume_knowledge.md
+      # 简历结构化数据：绑定本地目录，修改后删库重启即可更新
+      - ./backend/data:/app/data
+      # 【可选】离线模型缓存挂载：如果服务器完全无法连接外网，可在本地网络好的机器上下载后，将其挂载进容器
+      # - ./backend/model_cache:/home/appuser/.cache/chroma
+    restart: unless-stopped
+    networks:
+      - resume_net
+    healthcheck:
+      # python:3.11-slim 默认没有 curl，使用 python 自带的 http.client 进行健康检查
+      test: ["CMD", "python", "-c", "import http.client; conn = http.client.HTTPConnection('localhost', 8000); conn.request('GET', '/api/health'); res = conn.getresponse(); exit(0) if res.status == 200 else exit(1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # 构建时注入后端地址，使用容器间的内部网络名
+        API_BASE_URL: http://backend:8000
+    container_name: resume_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # 【服务端调用】容器间内网通信，使用后端服务名 backend 即可互通
+      API_BASE_URL: http://backend:8000
+      # 【客户端调用】浏览器发起的请求地址
+      # ⚠️ 远程部署时：这里必须改为服务器的公网 IP 或域名！如 http://你的公网IP:8000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - resume_net
+
+networks:
+  resume_net:
+    driver: bridge
+
+volumes:
+  db_data:
+  chroma_data:
