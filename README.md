@@ -51,36 +51,67 @@ my_resume/
 
 ## 快速开始
 
-### 方式一：本地开发
+### 第一步：准备工作（拉取代码后必做）
 
-#### 后端
+1. 确保已进入项目根目录：
+   ```bash
+   cd my_resume  # 如果你还没有进入该目录
+   ```
+2. 配置环境变量：
+   ```bash
+   # Windows (PowerShell/CMD) 中可手动将 backend/.env.example 复制一份并重命名为 .env
+   cp backend/.env.example backend/.env
+   ```
+3. 编辑 `backend/.env` 文件，必须填入你的 API Key（例如 DeepSeek 或 OpenAI）：
+   ```env
+   OPENAI_API_KEY=sk-your-key
+   OPENAI_API_BASE=https://api.deepseek.com/v1
+   CHAT_MODEL_NAME=deepseek-chat
+   ```
+
+---
+
+完成准备工作后，选择以下任意一种方式启动项目：
+
+### 方式一：Docker 一键部署（推荐）
+
+直接在**项目根目录**运行以下命令，即可一键构建并启动前后端：
+
+```bash
+docker-compose up -d --build
+```
+
+启动完成后：
+- 前端页面：http://localhost:3000
+- 后端 API：http://localhost:8000
+- Swagger 文档：http://localhost:8000/docs
+
+> ⚠️ 注意：如果你是将项目部署到远程服务器并希望外部浏览器能访问，必须修改根目录 `docker-compose.yml` 中的 `NEXT_PUBLIC_API_BASE_URL` 为服务器的公网 IP 或域名，然后再执行构建命令。
+
+### 方式二：本地开发模式（分开运行）
+
+#### 1. 启动后端
 
 ```bash
 cd backend
 
 # 创建虚拟环境
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+source venv/bin/activate        # Windows 请使用: venv\Scripts\activate
 
 # 安装依赖
 pip install -r requirements.txt
-
-# 配置环境变量
-cp .env.example .env
-# 编辑 .env，填入你的 API Key：
-# OPENAI_API_KEY=sk-your-key
-# OPENAI_API_BASE=https://api.deepseek.com/v1
-# CHAT_MODEL_NAME=deepseek-chat
 
 # 启动服务（首次启动会自动初始化数据库和向量库）
 uvicorn app.main:app --reload
 ```
 
-后端运行于 http://localhost:8000，Swagger 文档：http://localhost:8000/docs
+后端运行于 http://localhost:8000，Swagger 文档：http://localhost:8000/docs。
+> 首次启动时 ChromaDB 会自动下载内置 Embedding 模型（约 80MB），请耐心等待。
 
-> 首次启动时 ChromaDB 会下载内置 Embedding 模型（约 80MB），请耐心等待。
+#### 2. 启动前端
 
-#### 前端
+需新建一个终端窗口，进入前端目录：
 
 ```bash
 cd frontend
@@ -93,18 +124,6 @@ npm run dev
 ```
 
 前端运行于 http://localhost:3000
-
-### 方式二：Docker 部署
-
-```bash
-# 后端
-cd backend
-docker-compose up -d
-
-# 前端
-cd frontend
-docker-compose up -d
-```
 
 ## API 接口
 

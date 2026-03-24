@@ -12,8 +12,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV HF_ENDPOINT=https://hf-mirror.com
 
 # 预下载 ChromaDB 默认 embedding 模型（all-MiniLM-L6-v2）
-# 模型缓存在 /root/.cache/chroma，后续复制到运行阶段，避免部署时重复下载
-RUN python -c "from chromadb.utils.embedding_functions import DefaultEmbeddingFunction; DefaultEmbeddingFunction()(['test'])"
+# ChromaDB 默认从 AWS S3 下载模型，国内容易超时。这里我们提供一个专门的脚本，改从国内镜像源下载模型文件
+COPY download_model.py .
+RUN python download_model.py
 
 # ── 运行阶段 ──────────────────────────────────────────────
 FROM python:3.11-slim
