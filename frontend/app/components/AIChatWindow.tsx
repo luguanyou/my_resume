@@ -109,7 +109,7 @@ function TypingIndicator() {
 export default function AIChatWindow({
   initialMessages,
   quickReplies = DEFAULT_QUICK_REPLIES,
-  apiEndpoint = "/api/chat",
+  apiEndpoint = "/myresume/api/chat",
   agentName = "guanyou-agent-v1.0",
 }: AIChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(

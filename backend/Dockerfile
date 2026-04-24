@@ -1,40 +1,61 @@
-# ── 构建阶段 ──────────────────────────────────────────────
+# ── Stage 1: 依赖构建阶段 ──────────────────────────────────────────────
 FROM python:3.11-slim AS builder
+
+# 从 Astral 官方镜像获取 uv 的二进制文件（Docker 中使用 uv 的官方最佳实践）
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# 先单独复制依赖文件，利用 Docker 层缓存
-# 只要 requirements.txt 不变，pip install 就不会重跑
+# 接收 docker-compose 传进来的代理配置，确保在某些网络环境下能够正常下载
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTPS_PROXY
+
+# 配置 uv 行为：
+# 1. 开启字节码编译（生成 .pyc），提升容器内 Python 应用的冷启动速度
+ENV UV_COMPILE_BYTECODE=1
+
+# 创建虚拟环境并设置环境变量激活它
+ENV VIRTUAL_ENV=/opt/venv
+RUN uv venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# 复制依赖文件并使用 uv 极速安装
+# uv 的解析和下载速度通常比 pip 快 10-100 倍
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv pip install -r requirements.txt
 
-# 设置 HuggingFace 国内镜像源，加速模型下载
+# 预下载较小的内置模型（使用国内镜像）
 ENV HF_ENDPOINT=https://hf-mirror.com
-
-# 预下载 ChromaDB 默认 embedding 模型（all-MiniLM-L6-v2）
-# ChromaDB 默认从 AWS S3 下载模型，国内容易超时。这里我们提供一个专门的脚本，改从国内镜像源下载模型文件
 COPY download_model.py .
 RUN python download_model.py
 
-# ── 运行阶段 ──────────────────────────────────────────────
+# ── Stage 2: 运行阶段 ──────────────────────────────────────────────
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# 从 builder 阶段复制已安装的依赖
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
+# 设置时区和编码
+ENV TZ=Asia/Shanghai
+ENV PYTHONUNBUFFERED=1
 
-# 复制预下载的 ChromaDB 模型缓存
+# 从 builder 阶段复制完整的虚拟环境
+# 注意：同时需要把 VIRTUAL_ENV 和 PATH 环境变量带过来
+ENV VIRTUAL_ENV=/opt/venv
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# 复制预下载的小模型缓存（如果有）
 COPY --from=builder /root/.cache/chroma /root/.cache/chroma
 
 # 复制项目代码与数据文件
-COPY app/           ./app/
-COPY data/          ./data/
+COPY app/ ./app/
+COPY data/ ./data/
 COPY resume_knowledge.md .
 
-# 创建持久化目录（volume 挂载点）
-RUN mkdir -p /app/db /app/chroma_db
+# 创建必要的挂载目录
+RUN mkdir -p /app/db /app/chroma_db /app/model_cache
 
 # 暴露端口
 EXPOSE 8000
@@ -42,7 +63,7 @@ EXPOSE 8000
 # 以非 root 用户运行，提升安全性
 RUN useradd -m appuser \
     && chown -R appuser /app \
-    && cp -r /root/.cache /home/appuser/.cache \
+    && cp -r /root/.cache /home/appuser/.cache 2>/dev/null || true \
     && chown -R appuser /home/appuser/.cache
 USER appuser
 

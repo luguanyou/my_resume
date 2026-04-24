@@ -87,8 +87,8 @@ export interface ChatRequest {
 
 async function apiFetch<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${BASE_URL}/api${path}`, {
-      next: { revalidate: 60 }, // ISR：60s 重验证
+    const res = await fetch(`${BASE_URL}/myresume/api${path}`, {
+      cache: "no-store", // 禁用缓存，每次请求都实时拉取
     });
     if (!res.ok) return null;
     return res.json() as Promise<T>;

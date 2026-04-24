@@ -34,7 +34,7 @@ def create_app() -> FastAPI:
             count = refresh_knowledge()
             logger.info(f"知识库加载完成，共 {count} 个文本块")
         except FileNotFoundError:
-            logger.warning("知识库文件不存在，跳过向量化。请创建 resume_knowledge.md 后调用 /api/admin/refresh-knowledge")
+            logger.warning("知识库文件不存在，跳过向量化。请创建 resume_knowledge.md 后调用 /myresume/api/admin/refresh-knowledge")
         except Exception:
             logger.exception("知识库加载失败")
 

@@ -16,6 +16,8 @@ import {
   mapEducation,
 } from "@/lib/api";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // 并行拉取所有接口，任一失败返回 null，组件自动降级到内置默认数据
   const [profile, experiences, projects, skills, educations] =

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   // ── 2. 转发到后端 ──────────────────────────────────────────
   let upstream: Response;
   try {
-    upstream = await fetch(`${API_BASE_URL}/api/chat`, {
+    upstream = await fetch(`${API_BASE_URL}/myresume/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session_id, message }),

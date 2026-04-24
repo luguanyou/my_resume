@@ -27,7 +27,7 @@ from app.rag.vector_store import refresh_knowledge
 from app.rag.chat_engine import chat_stream
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/myresume/api")
 
 
 # ─── 结构化数据接口 ─────────────────────────────────────
