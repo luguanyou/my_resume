@@ -22,6 +22,13 @@ services:
       - HF_ENDPOINT=https://hf-mirror.com
       - TRANSFORMERS_CACHE=/app/model_cache/huggingface
       - SENTENCE_TRANSFORMERS_HOME=/app/model_cache/sentence_transformers
+      # 强制清空可能在构建时残留在镜像里的代理配置，防止远程部署时网络请求超时卡死
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - http_proxy=
+      - https_proxy=
+      - all_proxy=
+      - ALL_PROXY=
     volumes:
       - db_data:/app/db
       - chroma_data:/app/chroma_db
@@ -63,6 +70,8 @@ services:
 networks:
   resume_net:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
 
 volumes:
   db_data:
