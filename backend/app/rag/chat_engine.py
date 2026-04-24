@@ -1,3 +1,4 @@
+import httpx
 from collections import defaultdict
 from typing import AsyncGenerator
 
@@ -51,7 +52,17 @@ async def chat_stream(session_id: str, message: str) -> AsyncGenerator[str, None
 
     messages = _build_messages(session_id, message, context_chunks)
 
-    client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY, base_url=settings.OPENAI_API_BASE)
+    # 禁用从环境变量中读取代理配置（避免被不正确的 HTTP_PROXY 拦截），并增加连接超时时间
+    http_client = httpx.AsyncClient(
+        trust_env=False, 
+        timeout=httpx.Timeout(60.0, connect=15.0)
+    )
+
+    client = AsyncOpenAI(
+        api_key=settings.OPENAI_API_KEY, 
+        base_url=settings.OPENAI_API_BASE,
+        http_client=http_client
+    )
 
     full_reply = ""
     stream = await client.chat.completions.create(

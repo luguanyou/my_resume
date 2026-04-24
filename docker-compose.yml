@@ -2,15 +2,16 @@ services:
   backend:
     build: 
       context: ./backend
+      network: host
       dockerfile: Dockerfile
-      args:
-        - HTTP_PROXY=http://host.docker.internal:7890
-        - HTTPS_PROXY=http://host.docker.internal:7890
+#      args:
+#        - HTTP_PROXY=http://host.docker.internal:7890
+#        - HTTPS_PROXY=http://host.docker.internal:7890
       extra_hosts:
         - "host.docker.internal:host-gateway"
     container_name: resume_backend
     ports:
-      - "9915:8000"
+      - "9916:8000"
     env_file:
       - ./backend/.env
     environment:
@@ -41,6 +42,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      network: host
       dockerfile: Dockerfile
       args:
         API_BASE_URL: http://backend:8000
@@ -50,7 +52,7 @@ services:
     environment:
       NODE_ENV: production
       API_BASE_URL: http://backend:8000
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:9915
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:9916
     depends_on:
       backend:
         condition: service_healthy
