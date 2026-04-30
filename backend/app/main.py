@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from app.core.config import get_settings
 from app.core.security import setup_cors
-from app.api.endpoints import router
+from app.api.endpoints import public_router, router
 from app.db.init_db import init_database
 from app.rag.vector_store import refresh_knowledge
 
@@ -23,11 +23,12 @@ def create_app() -> FastAPI:
 
     setup_cors(app)
     app.include_router(router)
+    app.include_router(public_router)
 
     @app.on_event("startup")
     async def on_startup():
         logger.info("正在初始化数据库...")
-        init_database()
+        init_database(force=settings.RESEED_ON_STARTUP)
         logger.info("数据库初始化完成")
 
         try:

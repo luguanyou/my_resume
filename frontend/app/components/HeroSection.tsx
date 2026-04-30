@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import { ArrowRight, MessageSquare, Mail } from "lucide-react";
 
@@ -60,6 +59,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ data = DEFAULT_DATA }: HeroSectionProps) {
+
   return (
     <section className="relative w-full px-4 pt-16 pb-10 sm:px-8 md:px-12 lg:px-20 max-w-5xl mx-auto">
       <motion.div

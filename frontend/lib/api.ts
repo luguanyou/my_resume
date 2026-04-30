@@ -105,6 +105,22 @@ export const fetchSkills = () => apiFetch<ApiSkill[]>("/skills");
 export const fetchHealth = () => apiFetch<ApiHealth>("/health");
 export const fetchEducation = () => apiFetch<ApiEducation[]>("/education");
 
+export interface ProjectDetail {
+  id: string | number;
+  name: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+  link?: string;
+  description: string;
+  tech_stack: string[];
+  role_and_responsibilities: string;
+  highlights: string;
+}
+
+export const fetchProjectDetail = (id: string | number) => 
+  apiFetch<ProjectDetail>(`/projects/${id}`);
+
 // ─── Data Mappers ──────────────────────────────────────────────────────────
 // 将 API 原始数据转换为各组件 Props 所需的格式
 
@@ -159,7 +175,7 @@ export function mapProfileToHero(
       if (seen.has(s.category) || result.length >= 3) continue;
       seen.add(s.category);
       result.push({
-        label: `${s.name}（${s.proficiency}）`,
+        label: s.proficiency ? `${s.name}（${s.proficiency}）` : s.name,
         color: CATEGORY_COLORS[s.category] ?? "#6b7280",
       });
     }

@@ -38,6 +38,20 @@ class ProjectSchema(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ProjectDetailSchema(BaseModel):
+    id: int | str
+    name: str
+    start_date: str
+    end_date: str
+    status: str
+    link: str | None = None
+    description: str
+    tech_stack: list[str]
+    role_and_responsibilities: str
+    highlights: str
+
+
+
 class SkillSchema(BaseModel):
     id: int
     category: str

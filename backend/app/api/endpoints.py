@@ -1,8 +1,9 @@
 import json
 import logging
+import re
 from typing import AsyncGenerator
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -11,15 +12,19 @@ from app.db.schemas import (
     UserProfileSchema,
     WorkExperienceSchema,
     ProjectSchema,
+    ProjectDetailSchema,
     SkillSchema,
     EducationSchema,
     ChatRequest,
     HealthResponse,
 )
+from app.core.config import get_settings
+from app.db.init_db import reseed_database
 from app.services.resume_service import (
     get_profile,
     get_experiences,
     get_projects,
+    get_project,
     get_skills,
     get_education,
 )
@@ -28,6 +33,15 @@ from app.rag.chat_engine import chat_stream
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/myresume/api")
+public_router = APIRouter(prefix="/api")
+
+
+def _require_admin(
+    x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
+) -> None:
+    settings = get_settings()
+    if settings.ADMIN_TOKEN and x_admin_token != settings.ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 # ─── 结构化数据接口 ─────────────────────────────────────
@@ -50,6 +64,39 @@ def api_projects(db: Session = Depends(get_db)):
     return get_projects(db)
 
 
+@router.get("/projects/{project_id}", response_model=ProjectDetailSchema)
+def api_project_detail(project_id: int, db: Session = Depends(get_db)):
+    project = get_project(db, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    tech_stack = []
+    if project.tech_stack:
+        raw = re.sub(r"\[cite:[^\]]*\]", "", project.tech_stack)
+        tech_stack = [s.strip() for s in re.split(r"[,，、]", raw) if s.strip()]
+
+    return ProjectDetailSchema(
+        id=project.id,
+        name=project.name,
+        start_date="",
+        end_date="",
+        status="",
+        link=None,
+        description=project.description or "",
+        tech_stack=tech_stack,
+        role_and_responsibilities=project.role or "",
+        highlights=project.highlights or "",
+    )
+
+
+public_router.add_api_route(
+    "/projects/{project_id}",
+    api_project_detail,
+    methods=["GET"],
+    response_model=ProjectDetailSchema,
+)
+
+
 @router.get("/skills", response_model=list[SkillSchema])
 def api_skills(db: Session = Depends(get_db)):
     return get_skills(db)
@@ -62,7 +109,7 @@ def api_education(db: Session = Depends(get_db)):
 
 # ─── RAG 管理接口 ──────────────────────────────────────
 
-@router.post("/admin/refresh-knowledge")
+@router.post("/admin/refresh-knowledge", dependencies=[Depends(_require_admin)])
 def api_refresh_knowledge():
     try:
         count = refresh_knowledge()
@@ -72,6 +119,19 @@ def api_refresh_knowledge():
     except Exception as e:
         logger.exception("刷新知识库失败")
         raise HTTPException(status_code=500, detail=f"刷新失败: {e}")
+
+
+@router.post("/admin/reseed-db", dependencies=[Depends(_require_admin)])
+def api_reseed_db(overwrite: bool = True, db: Session = Depends(get_db)):
+    try:
+        counts = reseed_database(db, overwrite=overwrite)
+        db.commit()
+        return {"status": "ok", "overwrite": overwrite, "counts": counts}
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.exception("重灌数据库失败")
+        raise HTTPException(status_code=500, detail=f"重灌失败: {e}")
 
 
 # ─── AI 对话接口（SSE 流式） ──────────────────────────────

@@ -2,6 +2,8 @@ import json
 import logging
 from pathlib import Path
 
+from sqlalchemy.orm import Session
+
 from app.db.database import engine, SessionLocal, Base
 from app.db.models import UserProfile, WorkExperience, Project, Skill, Education
 
@@ -17,12 +19,22 @@ def _load_json() -> dict:
         return json.load(f)
 
 
-def init_database() -> None:
-    """创建表结构并从 data/resume.json 注入初始数据（如果表为空）。"""
+def init_database(force: bool = False) -> None:
+    """创建表结构并从 data/resume.json 注入初始数据。
+
+    - 默认仅在表为空时注入
+    - force=True 时会先清空表，再按 JSON 覆盖重灌
+    """
     Base.metadata.create_all(bind=engine)
 
     db = SessionLocal()
     try:
+        if force:
+            reseed_database(db, overwrite=True)
+            db.commit()
+            logger.info("简历数据已按 force=True 覆盖重灌")
+            return
+
         if db.query(UserProfile).count() == 0:
             data = _load_json()
             _seed_data(db, data)
@@ -30,6 +42,35 @@ def init_database() -> None:
             logger.info("简历数据初始化完成")
     finally:
         db.close()
+
+
+def reseed_database(db: Session, overwrite: bool = True) -> dict:
+    data = _load_json()
+
+    if overwrite:
+        db.query(WorkExperience).delete()
+        db.query(Project).delete()
+        db.query(Skill).delete()
+        db.query(Education).delete()
+        db.query(UserProfile).delete()
+        db.flush()
+
+        _seed_data(db, data)
+    else:
+        profile = db.query(UserProfile).first()
+        if profile is None:
+            db.add(UserProfile(**data["profile"]))
+        else:
+            for k, v in data["profile"].items():
+                setattr(profile, k, v)
+
+    return {
+        "profile": db.query(UserProfile).count(),
+        "experiences": db.query(WorkExperience).count(),
+        "projects": db.query(Project).count(),
+        "skills": db.query(Skill).count(),
+        "education": db.query(Education).count(),
+    }
 
 
 def _seed_data(db, data: dict) -> None:

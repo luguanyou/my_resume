@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     APP_TITLE: str = "卢官有 - 交互式简历 Agent"
     DEBUG: bool = False
 
+    ADMIN_TOKEN: str = ""
+    RESEED_ON_STARTUP: bool = False
+
     OPENAI_API_KEY: str = ""
     OPENAI_API_BASE: str = "https://api.deepseek.com/v1"
     CHAT_MODEL_NAME: str = "deepseek-chat"

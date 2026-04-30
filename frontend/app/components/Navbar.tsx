@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavItem {
   label: string;
@@ -13,16 +15,18 @@ interface NavItem {
 const CONTACT_EMAIL = "your@email.com";
 
 const NAV_ITEMS: NavItem[] = [
-  // { label: "关于", href: "#about" },
-  { label: "AI 对话", href: "#chat" },
-  { label: "工作经历", href: "#experience" },
-  { label: "教育经历", href: "#education" },
-  { label: "项目案例", href: "#projects" },
+  // { label: "关于", href: "/#about" },
+  { label: "AI 对话", href: "/#chat" },
+  { label: "工作经历", href: "/#experience" },
+  { label: "教育经历", href: "/#education" },
+  { label: "项目案例", href: "/#projects" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   // 滚动时加边框阴影
   useEffect(() => {
@@ -33,11 +37,20 @@ export default function Navbar() {
 
   // 锚点平滑跳转
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (!href.startsWith("#")) return;
-    e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMenuOpen(false);
+    const isHash = href.startsWith("/#") || href.startsWith("#");
+    if (!isHash) return;
+
+    const hash = href.substring(href.indexOf("#"));
+
+    if (pathname === "/") {
+      e.preventDefault();
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setMenuOpen(false);
+    } else {
+      // 如果不在首页，就让 Next.js 的 Link 默认行为来处理跳转
+      setMenuOpen(false);
+    }
   };
 
   return (
@@ -51,25 +64,25 @@ export default function Navbar() {
       >
         <nav className="max-w-5xl mx-auto px-4 sm:px-8 md:px-12 lg:px-20 h-14 flex items-center justify-between">
           {/* Logo / 名字 */}
-          <a
-            href="#about"
-            onClick={(e) => handleNav(e, "#about")}
+          <Link
+            href="/#about"
+            onClick={(e) => handleNav(e, "/#about")}
             className="font-mono text-sm font-bold text-gray-950 tracking-tight hover:opacity-70 transition-opacity"
           >
             <span className="text-gray-400 mr-1">~/</span>guanyou
-          </a>
+          </Link>
 
           {/* 桌面导航链接 */}
           <ul className="hidden sm:flex items-center gap-1">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
-                <a
+                <Link
                   href={item.href}
                   onClick={(e) => handleNav(e, item.href)}
                   className="px-3 py-1.5 rounded-md text-sm text-gray-500 hover:text-gray-950 hover:bg-gray-100 transition-all duration-150"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -108,13 +121,13 @@ export default function Navbar() {
             <ul className="flex flex-col px-4 py-3 gap-1">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     onClick={(e) => handleNav(e, item.href)}
                     className="block px-3 py-2.5 rounded-md text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-950 transition-colors"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li className="pt-2 border-t border-gray-100 mt-1">

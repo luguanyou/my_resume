@@ -95,5 +95,7 @@ Thumbs.db
 简历.pdf
 *.pdf
 data/
-resume_knowledge.md
+# resume_knowledge.md
 myresume.md
+
+docker-compose.override.yml
